@@ -10,17 +10,16 @@ st.title("RBI Mini APM System")
 st.caption("Connected to Excel")
 
 try:
-    df = pd.read_excel(EXCEL_FILE)
+    excel_file = pd.ExcelFile(EXCEL_FILE)
+st.write("Available Sheets:", excel_file.sheet_names)
 
-    st.success("Excel berhasil dibaca")
+target_sheet = "01_ASSET_INPUT_FULL"
 
-    col1, col2 = st.columns(2)
-    col1.metric("Total Rows", len(df))
-    col2.metric("Total Columns", len(df.columns))
-
-    st.subheader("Preview Data")
-    st.dataframe(df, use_container_width=True)
-
+if target_sheet in excel_file.sheet_names:
+    df = pd.read_excel(EXCEL_FILE, sheet_name=target_sheet)
+else:
+    st.warning(f"Sheet '{target_sheet}' tidak ditemukan. Pakai sheet pertama.")
+    df = pd.read_excel(EXCEL_FILE, sheet_name=0)
 except Exception as e:
     st.error("Gagal baca Excel")
     st.write(e)
